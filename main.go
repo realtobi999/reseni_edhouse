@@ -22,9 +22,9 @@ func main() {
 
 	// Get the file from the STDIN
 	if len(os.Args) != 2 {
-        fmt.Println("Usage: program.exe <filename>")
-        return
-    }
+		fmt.Println("Usage: program.exe <filename>")
+		return
+	}
 
 	file, err := os.Open(os.Args[1])
 	if err != nil {
@@ -84,56 +84,21 @@ func main() {
 				}
 
 				// Foreach number essentially calculate its neighbor,
-				// if atleast one is found that means that number is 
+				// if atleast one is found that means that number is
 				// valid and we can count it and move on
 				for n := 0; n < len(number); n++ {
 					// We do this to essentially imitate the actual index in the row
 					n += j
 
-					// Left Neighbour
-					if n != 0 && (row[n-1] != "." && !isNumber(row[n-1])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Right Neighbour
-					if n != len(row)-1 && (row[n+1] != "." && !isNumber(row[n+1])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Top Neighbour
-					if nthRow != 0 && (rowsArray[nthRow-1][n] != "." && !isNumber(rowsArray[nthRow-1][n])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Bottom Neighbour
-					if nthRow != len(rowsArray)-1 && (rowsArray[nthRow+1][n] != "." && !isNumber(rowsArray[nthRow+1][n])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Top Left Neighbour
-					if nthRow != 0 && n != 0 && (rowsArray[nthRow-1][n-1] != "." && !isNumber(rowsArray[nthRow-1][n-1])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Top Right Neighbour
-					if nthRow != 0 && n != len(row)-1 && (rowsArray[nthRow-1][n+1] != "." && !isNumber(rowsArray[nthRow-1][n+1])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Bottom-Left Neighbour
-					if nthRow != len(rowsArray)-1 && n != 0 && (rowsArray[nthRow+1][n-1] != "." && !isNumber(rowsArray[nthRow+1][n-1])) {
-						result += convertNumber(number)
-						break
-					}
-
-					// Bottom-Right Neighbour
-					if nthRow != len(rowsArray)-1 && n != len(row)-1 && (rowsArray[nthRow+1][n+1] != "." && !isNumber(rowsArray[nthRow+1][n+1])) {
+					// Check all neighbors
+					if (n != 0 && (row[n-1] != "." && !isNumber(row[n-1]))) || // Left Neighbour
+						(n != len(row)-1 && (row[n+1] != "." && !isNumber(row[n+1]))) || // Right Neighbour
+						(nthRow != 0 && (rowsArray[nthRow-1][n] != "." && !isNumber(rowsArray[nthRow-1][n]))) || // Top Neighbour
+						(nthRow != len(rowsArray)-1 && (rowsArray[nthRow+1][n] != "." && !isNumber(rowsArray[nthRow+1][n]))) || // Bottom Neighbour
+						(nthRow != 0 && n != 0 && (rowsArray[nthRow-1][n-1] != "." && !isNumber(rowsArray[nthRow-1][n-1]))) || // Top Left Neighbour
+						(nthRow != 0 && n != len(row)-1 && (rowsArray[nthRow-1][n+1] != "." && !isNumber(rowsArray[nthRow-1][n+1]))) || // Top Right Neighbour
+						(nthRow != len(rowsArray)-1 && n != 0 && (rowsArray[nthRow+1][n-1] != "." && !isNumber(rowsArray[nthRow+1][n-1]))) || // Bottom-Left Neighbour
+						(nthRow != len(rowsArray)-1 && n != len(row)-1 && (rowsArray[nthRow+1][n+1] != "." && !isNumber(rowsArray[nthRow+1][n+1]))) { // Bottom-Right Neighbour
 						result += convertNumber(number)
 						break
 					}
