@@ -72,15 +72,13 @@ func main() {
 				continue
 			}
 
-			// Iterate through the row until we find the end of the number
 			if isNumber(row[j]) {
-				if isNumber(row[j]) {
-					for k := 0; j+k < len(row); k++ {
-						if !isNumber(row[j+k]) {
-							break
-						}
-						number = append(number, row[j+k])
+				// Iterate through the row until we find the end of the number
+				for k := 0; j+k < len(row); k++ {
+					if !isNumber(row[j+k]) {
+						break
 					}
+					number = append(number, row[j+k])
 				}
 
 				// Foreach number essentially calculate its neighbor,
@@ -91,14 +89,14 @@ func main() {
 					n += j
 
 					// Check all neighbors
-					if (n != 0 && (row[n-1] != "." && !isNumber(row[n-1]))) || // Left Neighbour
-						(n != len(row)-1 && (row[n+1] != "." && !isNumber(row[n+1]))) || // Right Neighbour
-						(nthRow != 0 && (rowsArray[nthRow-1][n] != "." && !isNumber(rowsArray[nthRow-1][n]))) || // Top Neighbour
-						(nthRow != len(rowsArray)-1 && (rowsArray[nthRow+1][n] != "." && !isNumber(rowsArray[nthRow+1][n]))) || // Bottom Neighbour
-						(nthRow != 0 && n != 0 && (rowsArray[nthRow-1][n-1] != "." && !isNumber(rowsArray[nthRow-1][n-1]))) || // Top Left Neighbour
-						(nthRow != 0 && n != len(row)-1 && (rowsArray[nthRow-1][n+1] != "." && !isNumber(rowsArray[nthRow-1][n+1]))) || // Top Right Neighbour
-						(nthRow != len(rowsArray)-1 && n != 0 && (rowsArray[nthRow+1][n-1] != "." && !isNumber(rowsArray[nthRow+1][n-1]))) || // Bottom-Left Neighbour
-						(nthRow != len(rowsArray)-1 && n != len(row)-1 && (rowsArray[nthRow+1][n+1] != "." && !isNumber(rowsArray[nthRow+1][n+1]))) { // Bottom-Right Neighbour
+					if (n != 0 && (row[n-1] != "." && !isNumber(row[n-1]))) || // Left Neighbor
+						(n != len(row)-1 && (row[n+1] != "." && !isNumber(row[n+1]))) || // Right Neighbor
+						(nthRow != 0 && (rowsArray[nthRow-1][n] != "." && !isNumber(rowsArray[nthRow-1][n]))) || // Top Neighbor
+						(nthRow != len(rowsArray)-1 && (rowsArray[nthRow+1][n] != "." && !isNumber(rowsArray[nthRow+1][n]))) || // Bottom Neighbor
+						(nthRow != 0 && n != 0 && (rowsArray[nthRow-1][n-1] != "." && !isNumber(rowsArray[nthRow-1][n-1]))) || // Top Left Neighbor
+						(nthRow != 0 && n != len(row)-1 && (rowsArray[nthRow-1][n+1] != "." && !isNumber(rowsArray[nthRow-1][n+1]))) || // Top Right Neighbor
+						(nthRow != len(rowsArray)-1 && n != 0 && (rowsArray[nthRow+1][n-1] != "." && !isNumber(rowsArray[nthRow+1][n-1]))) || // Bottom-Left Neighbor
+						(nthRow != len(rowsArray)-1 && n != len(row)-1 && (rowsArray[nthRow+1][n+1] != "." && !isNumber(rowsArray[nthRow+1][n+1]))) { // Bottom-Right Neighbor
 						result += convertNumber(number)
 						break
 					}
