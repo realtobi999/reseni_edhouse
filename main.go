@@ -12,18 +12,71 @@ var numbers = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 
 func main() {
 	// Two-Dimensional array to store each row of the table as array
-	var rowsArray [][]string
+	var rows [][]string
+	// Raw string table inserted by STDIN
+	var table string
 	// Returning Result
 	var result int
-	// Total rows in the table
-	var rowsTotal int
-	// Raw string table inserted by STDIN
-	var rawTable string
 
+	table = GetTableContent()
+	rows = ConvertTableInto2DArray(table)
+
+	// Iterate through each row find symbols and calculate the result
+	for nthRow, row := range rows {
+		for j := 0; j < len(row); j++ {
+			if IsNumber(row[j]) {
+				// List to store individual digits of a number
+				var number []string
+
+				// Iterate through the row until we find the end of the number
+				for k := 0; j+k < len(row); k++ {
+					if !IsNumber(row[j+k]) {
+						break
+					}
+					number = append(number, row[j+k])
+				}
+
+				// Foreach number essentially calculate its neighbor,
+				// if atleast one is found that means that number is
+				// valid and we can count it and move on
+				for n := 0; n < len(number); n++ {
+					// // We do this to essentially imitate the actual index in the row
+					n += j
+
+					// Check for valid neighbors
+					if hasValidNeighbor(rows, row, nthRow, n){
+						result += ConvertNumber(number)
+						break
+					}
+
+					// Do this so we don't exceed the n < len(numbers)
+					n -= j
+				}
+
+				// This means that we skip over the number in the row in the next loop
+				j += len(number) - 1
+			}
+		}
+	}
+
+	fmt.Printf("TOTAL: %v", result)
+}
+
+func hasValidNeighbor(rows [][]string, row []string, nthRow int, n int) bool {
+	return 	(n != 0 && (row[n-1] != "." && !IsNumber(row[n-1]))) || // Left Neighbor
+			(n != len(row)-1 && (row[n+1] != "." && !IsNumber(row[n+1]))) || // Right Neighbor
+			(nthRow != 0 && (rows[nthRow-1][n] != "." && !IsNumber(rows[nthRow-1][n]))) || // Top Neighbor
+			(nthRow != len(rows)-1 && (rows[nthRow+1][n] != "." && !IsNumber(rows[nthRow+1][n]))) || // Bottom Neighbor
+			(nthRow != 0 && n != 0 && (rows[nthRow-1][n-1] != "." && !IsNumber(rows[nthRow-1][n-1]))) || // Top Left Neighbor
+			(nthRow != 0 && n != len(row)-1 && (rows[nthRow-1][n+1] != "." && !IsNumber(rows[nthRow-1][n+1]))) || // Top Right Neighbor
+			(nthRow != len(rows)-1 && n != 0 && (rows[nthRow+1][n-1] != "." && !IsNumber(rows[nthRow+1][n-1]))) || // Bottom-Left Neighbor
+			(nthRow != len(rows)-1 && n != len(row)-1 && (rows[nthRow+1][n+1] != "." && !IsNumber(rows[nthRow+1][n+1]))) // Bottom-Right Neighbor
+}
+
+func GetTableContent() string {
 	// Get the file from the STDIN
 	if len(os.Args) != 2 {
-		fmt.Println("Usage: program.exe <filename>")
-		return
+		log.Fatal("Usage: program.exe <filename>")
 	}
 
 	file, err := os.Open(os.Args[1])
@@ -37,85 +90,39 @@ func main() {
 		log.Fatal(err)
 	}
 
-	rawTable = string(content)
+	return string(content)
+}
+
+func ConvertTableInto2DArray(table string) [][]string {
+	var totalRows int
+	var rows [][]string
 
 	// Calculate the total of rows
-	for _, char := range rawTable {
+	for _, char := range table {
 		if char == '\n' {
-			rowsTotal++
+			totalRows++
 		}
 	}
 
 	// Calculate the width of each row
-	width := len(rawTable) / (rowsTotal + 1)
+	width := len(table) / (totalRows + 1)
 
 	// Create the two-dimensional array
-	for i := 0; i <= rowsTotal; i++ {
+	for i := 0; i <= totalRows; i++ {
 		var array []string
 		for j := 0; j < width; j++ {
 			index := i*(width+1) + j
-			if index < len(rawTable) {
-				array = append(array, string(rawTable[index]))
+			if index < len(table) {
+				array = append(array, string(table[index]))
 			}
 		}
-		rowsArray = append(rowsArray, array)
+		rows = append(rows, array)
 	}
 
-	// Iterate through each row find symbols and calculate the result
-	for nthRow, row := range rowsArray {
-
-		// List to store individual digits of a number
-		var number []string
-		for j := 0; j < len(row); j++ {
-
-			if row[j] == "." {
-				continue
-			}
-
-			if isNumber(row[j]) {
-				// Iterate through the row until we find the end of the number
-				for k := 0; j+k < len(row); k++ {
-					if !isNumber(row[j+k]) {
-						break
-					}
-					number = append(number, row[j+k])
-				}
-
-				// Foreach number essentially calculate its neighbor,
-				// if atleast one is found that means that number is
-				// valid and we can count it and move on
-				for n := 0; n < len(number); n++ {
-					// We do this to essentially imitate the actual index in the row
-					n += j
-
-					// Check all neighbors
-					if (n != 0 && (row[n-1] != "." && !isNumber(row[n-1]))) || // Left Neighbor
-						(n != len(row)-1 && (row[n+1] != "." && !isNumber(row[n+1]))) || // Right Neighbor
-						(nthRow != 0 && (rowsArray[nthRow-1][n] != "." && !isNumber(rowsArray[nthRow-1][n]))) || // Top Neighbor
-						(nthRow != len(rowsArray)-1 && (rowsArray[nthRow+1][n] != "." && !isNumber(rowsArray[nthRow+1][n]))) || // Bottom Neighbor
-						(nthRow != 0 && n != 0 && (rowsArray[nthRow-1][n-1] != "." && !isNumber(rowsArray[nthRow-1][n-1]))) || // Top Left Neighbor
-						(nthRow != 0 && n != len(row)-1 && (rowsArray[nthRow-1][n+1] != "." && !isNumber(rowsArray[nthRow-1][n+1]))) || // Top Right Neighbor
-						(nthRow != len(rowsArray)-1 && n != 0 && (rowsArray[nthRow+1][n-1] != "." && !isNumber(rowsArray[nthRow+1][n-1]))) || // Bottom-Left Neighbor
-						(nthRow != len(rowsArray)-1 && n != len(row)-1 && (rowsArray[nthRow+1][n+1] != "." && !isNumber(rowsArray[nthRow+1][n+1]))) { // Bottom-Right Neighbor
-						result += convertNumber(number)
-						break
-					}
-
-					// Do this so we don't exceed the n < len(numbers)
-					n -= j
-				}
-
-				// This means that we skip over the number in the row in the next loop
-				j += len(number) - 1
-				number = []string{}
-			}
-		}
-	}
-
-	fmt.Printf("TOTAL: %v", result)
+	return rows
 }
 
-func convertNumber(numberList []string) int {
+func ConvertNumber(numberList []string) int {
 	numberString := ""
 	for _, char := range numberList {
 		numberString += char
@@ -129,7 +136,7 @@ func convertNumber(numberList []string) int {
 	return num
 }
 
-func isNumber(val string) bool {
+func IsNumber(val string) bool {
 	for _, char := range numbers {
 		if char == val {
 			return true
