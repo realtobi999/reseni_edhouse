@@ -39,20 +39,13 @@ func main() {
 				// Foreach number essentially calculate its neighbor,
 				// if atleast one is found that means that number is
 				// valid and we can count it and move on
-				for n := 0; n < len(number); n++ {
-					// // We do this to essentially imitate the actual index in the row
-					n += j
-
+				for n := j; n < len(number) + j; n++ {
 					// Check for valid neighbors
 					if hasValidNeighbor(rows, row, nthRow, n){
 						result += ConvertNumber(number)
 						break
 					}
-
-					// Do this so we don't exceed the n < len(numbers)
-					n -= j
 				}
-
 				// This means that we skip over the number in the row in the next loop
 				j += len(number) - 1
 			}
